@@ -1,0 +1,11 @@
+# .NET build output
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Arduino / editor leftovers
+*.ino.bak
+.vscode/
+.claude/

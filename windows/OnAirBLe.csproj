@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- WinExe: the app runs silently in the background; no console window is shown. -->
+    <OutputType>WinExe</OutputType>
+
+    <!--
+      net10.0-windows10.0.19041.0:
+        * The "10.0.19041.0" Windows SDK suffix projects the WinRT APIs we need
+          (Windows.Devices.Bluetooth / Windows.Devices.Enumeration) directly into
+          the project, with no NuGet package required.
+        * .NET 10 is the LTS runtime installed on the target toolchain.
+    -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+
+    <!-- WinForms is used only for the tray NotifyIcon and the tiny setup window. -->
+    <UseWindowsForms>true</UseWindowsForms>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- The installed EXE (and the Run-key autostart entry) is named OnAirIndicator.exe. -->
+    <AssemblyName>OnAirIndicator</AssemblyName>
+    <RootNamespace>OnAirBle</RootNamespace>
+
+    <!--
+      Embedded as a Win32 icon resource, so Explorer, the taskbar and Alt+Tab pick it up; it
+      survives single-file publish. Contains 16/32/48/256 px so Windows never has to rescale.
+      Note this is NOT the tray icon: TrayIcon.MakeDotIcon draws that at runtime because its
+      colour encodes the connection/on-air state.
+    -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
+
+    <!-- Single 64-bit target; the RID for single-file publish is passed on the command line. -->
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+
+    <!-- Trim/self-extract friendliness for single-file publish. -->
+    <SelfContained>false</SelfContained>
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <!--
+      The self-contained bundle is ~135 MB uncompressed, and almost none of that is our code
+      (~0.2 MB): it is the WinRT projections, WinForms and the runtime. Deflating the bundle
+      roughly halves it. The cost is decompressing assemblies at every start, which is the right
+      trade for a background app launched once at sign-in.
+
+      Only takes effect on a self-contained PublishSingleFile publish; plain `dotnet build` is
+      unaffected. Trimming is deliberately NOT enabled: WinForms is not supported for trimming and
+      the WinRT projections rely on reflection, so it would risk runtime failures in the BLE paths.
+    -->
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+
+    <!--
+      Publisher metadata. This is what Explorer shows under Properties > Details, and what a
+      code-signing certificate (or Microsoft's reputation service) attributes the binary to.
+      An EXE with no Company/Copyright reads as anonymous to both a reviewer and to SmartScreen,
+      so these are filled in deliberately — see docs/KURULUM-WINDOWS.md.
+    -->
+    <Version>1.0.0</Version>
+    <Product>On Air Indicator</Product>
+    <AssemblyTitle>On Air Indicator</AssemblyTitle>
+    <Company>Mert Demirdöven</Company>
+    <Authors>Mert Demirdöven</Authors>
+    <Copyright>Copyright (c) 2026 Mert Demirdöven</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <Description>Windowless BLE companion that mirrors camera/mic usage to an ESP32-C3 "On Air" light.</Description>
+
+    <!--
+      Deterministic output: the same source must produce the same bytes, so the SHA-256 of the
+      published EXE only changes when the code actually changes. That matters because Smart App
+      Control / SmartScreen reputation is granted per file hash — a hash that churns on every
+      rebuild can never accumulate any. Requires no CI server; it just strips machine-local paths.
+    -->
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <!--
+    No third-party NuGet dependencies on purpose: everything (WinRT BLE, WinForms,
+    Microsoft.Win32.Registry, System.Text.Json) ships with the target framework,
+    so the single-file self-contained EXE stays clean.
+  -->
+
+</Project>

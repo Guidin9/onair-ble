@@ -186,4 +186,4 @@ Mimari notları, yeniden bağlanma kuralları ve thread modeli [`CLAUDE.md`](CLA
 
 ## Lisans
 
-[MIT](LICENSE) © 2026 Mert Demirdöven
+[GPL-3.0-or-later](LICENSE) © 2026 Mert Demirdöven. Değiştirilmiş sürümler aynı lisansla ve kaynak koduyla yayınlanmalı, bu telif notu korunmalı. v1.0.0 MIT lisansıyla yayınlanmıştı.

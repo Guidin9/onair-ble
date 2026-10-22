@@ -185,4 +185,4 @@ Architecture notes, reconnect rules and the threading model are in [`CLAUDE.md`]
 
 ## License
 
-[MIT](LICENSE) © 2026 Mert Demirdöven
+[GPL-3.0-or-later](LICENSE) © 2026 Mert Demirdöven. Modified versions must be released under the same license with their source code and keep this notice. v1.0.0 was released under MIT.
